@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ['3.0', '3.1', '3.2', '3.3', '3.4']
+        rails-version: ['6.0', '6.1', '7.0', '7.1', '8.0']
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+    - name: Install dependencies
+      run: |
+        gem install bundler
+        bundle install
+    - name: Run tests
+      run: bundle exec rspec
+    - name: Build gem
+      run: gem build rails_console_pro.gemspec

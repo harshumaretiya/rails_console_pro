@@ -1,0 +1,26 @@
+AllCops:
+  TargetRubyVersion: 3.0
+  NewCops: enable
+  Exclude:
+    - 'bin/**/*'
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'script/**/*'
+    - 'vendor/**/*'
+    - 'spec/spec_helper.rb'
+    - 'spec/rails_helper.rb'
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - '*.gemspec'
+
+Layout/LineLength:
+  Max: 120
+
