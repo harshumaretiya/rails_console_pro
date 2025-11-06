@@ -47,6 +47,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "pastel", "~> 0.8.0"
   spec.add_dependency "tty-color", "~> 0.6.0"
   spec.add_dependency "pry", ">= 0.14.0", "< 0.16.0"
+  spec.add_dependency "pry-rails", ">= 0.3.9"
 
   # Development dependencies
   spec.add_development_dependency "bundler", "~> 2.0"
