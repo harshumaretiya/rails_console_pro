@@ -54,6 +54,11 @@ module RailsConsolePro
     printer_class = printer_for(value)
     printer_class.new(output, value, pry_instance).print
   rescue => e
+    # Show error in development to help debug
+    if Rails.env.development? || ENV['RAILS_CONSOLE_PRO_DEBUG']
+      output.puts PASTEL.red.bold("💥 RailsConsolePro Error: #{e.class}: #{e.message}")
+      output.puts PASTEL.dim(e.backtrace.first(5).join("\n"))
+    end
     handle_error(output, e, value, pry_instance)
   end
 
