@@ -235,7 +235,6 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.0)
-  pry (>= 0.14.0)
   pry-byebug
   rails (>= 6.0)
   rails_console_pro!

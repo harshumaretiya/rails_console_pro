@@ -15,8 +15,9 @@ module RailsConsolePro
           rescue => e
             # Fallback to default Pry printing if our printer fails
             if Rails.env.development? || ENV['RAILS_CONSOLE_PRO_DEBUG']
-              output.puts Pastel.new.red.bold("💥 RailsConsolePro Error in Pry hook: #{e.class}: #{e.message}")
-              output.puts Pastel.new.dim(e.backtrace.first(3).join("\n"))
+              pastel = RailsConsolePro::ColorHelper.pastel
+              output.puts pastel.red.bold("💥 RailsConsolePro Error in Pry hook: #{e.class}: #{e.message}")
+              output.puts pastel.dim(e.backtrace.first(3).join("\n"))
             end
             Pry::ColorPrinter.default(output, value, pry_instance)
           end

@@ -57,11 +57,7 @@ module RailsConsolePro
     private
 
     def validate_model!
-      unless model.is_a?(Class) && model < ActiveRecord::Base
-        raise ArgumentError, "#{model} is not an ActiveRecord model"
-      end
-      
-      # Additional validation for edge cases (but don't fail if table doesn't exist - stats might still be useful)
+      ModelValidator.validate_model!(model)
       if ModelValidator.abstract_class?(model)
         raise ArgumentError, "#{model} is an abstract class and has no database table"
       end

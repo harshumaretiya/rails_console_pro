@@ -48,9 +48,7 @@ module RailsConsolePro
     end
 
     def validate_model!
-      unless @model.is_a?(Class) && @model < ActiveRecord::Base
-        raise ArgumentError, "#{@model} is not an ActiveRecord model"
-      end
+      ModelValidator.validate_model!(@model)
     end
 
     def display_menu(model)

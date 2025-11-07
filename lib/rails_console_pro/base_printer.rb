@@ -45,7 +45,7 @@ module RailsConsolePro
 
     # Helper for bold colored text (delegates to ColorHelper)
     def bold_color(method, text)
-      RailsConsolePro::PASTEL.bold.public_send(method, text)
+      RailsConsolePro::ColorHelper.pastel.bold.public_send(method, text)
     end
 
     # Format value with type-aware coloring

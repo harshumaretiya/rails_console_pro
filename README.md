@@ -40,87 +40,31 @@ $ gem install rails_console_pro
 
 ## 📖 Usage
 
-### Basic Usage
-
 The gem automatically loads when you start your Rails console. No additional setup required!
 
-For customization, create `config/initializers/rails_console_pro.rb`:
+### Quick Examples
 
 ```ruby
-# config/initializers/rails_console_pro.rb
-RailsConsolePro.configure do |config|
-  config.color_scheme = :dark
-  config.show_welcome_message = true
-end
-```
-
-Or use the generator:
-
-```bash
-rails generate rails_console_pro:install
-```
-
-### Schema Inspection
-
-Inspect any model's schema:
-
-```ruby
+# Schema inspection
 schema User
-# or
-schema(User)
-```
 
-### SQL Explain
-
-Analyze query execution plans:
-
-```ruby
+# SQL explain
 explain User.where(active: true)
-# or
-explain(User.where(active: true))
-```
 
-### Model Statistics
-
-Get comprehensive model statistics:
-
-```ruby
+# Model statistics
 stats User
-# or
-stats(User)
-```
 
-### Association Navigation
-
-Navigate through model associations interactively:
-
-```ruby
+# Association navigation
 navigate User
-# or
-navigate(User)
-```
 
-### Object Diffing
-
-Compare two objects:
-
-```ruby
+# Object diffing
 diff user1, user2
-# or
-diff(user1, user2)
-```
 
-### Export
-
-Export data to files:
-
-```ruby
-# In Pry
+# Export
 export schema(User) user_schema.json
-
-# In IRB or as method
-schema(User).export_to_file('user_schema.json')
 ```
+
+See [QUICK_START.md](QUICK_START.md) for more examples and detailed documentation for each feature.
 
 ## ⚙️ Configuration
 
@@ -156,7 +100,14 @@ end
 
 ## 📚 Documentation
 
-Full documentation is available at [https://github.com/yourusername/rails_console_pro/wiki](https://github.com/yourusername/rails_console_pro/wiki)
+- [Quick Start Guide](QUICK_START.md) - Get started in minutes
+- [Schema Inspection](docs/SCHEMA_INSPECTION.md) - Inspect database schemas
+- [SQL Explain](docs/SQL_EXPLAIN.md) - Analyze query performance
+- [Model Statistics](docs/MODEL_STATISTICS.md) - Get model statistics
+- [Association Navigation](docs/ASSOCIATION_NAVIGATION.md) - Navigate model associations
+- [Object Diffing](docs/OBJECT_DIFFING.md) - Compare objects
+- [Export](docs/EXPORT.md) - Export to JSON, YAML, HTML
+- [Formatting](docs/FORMATTING.md) - Beautiful console output
 
 ## 🤝 Contributing
 

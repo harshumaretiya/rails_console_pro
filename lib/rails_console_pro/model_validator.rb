@@ -48,9 +48,11 @@ module RailsConsolePro
     end
 
     # Check if table is very large (for performance considerations)
-    def large_table?(model_class, threshold: 10_000)
+    def large_table?(model_class, threshold: nil)
       return false unless valid_model?(model_class)
       return false unless has_table?(model_class)
+      
+      threshold ||= RailsConsolePro.config.stats_large_table_threshold
       
       begin
         count = model_class.count
@@ -191,6 +193,26 @@ module RailsConsolePro
     rescue => e
       # If we can't determine, assume it's fine
       false
+    end
+
+    # Validate model and raise error if invalid (for use in initializers)
+    def validate_model!(model_class)
+      unless valid_model?(model_class)
+        raise ArgumentError, "#{model_class} is not an ActiveRecord model"
+      end
+      model_class
+    end
+
+    # Validate model for schema inspection and raise error if invalid
+    def validate_model_for_schema!(model_class)
+      validate_model!(model_class)
+      if abstract_class?(model_class)
+        raise ArgumentError, "#{model_class} is an abstract class and has no database table"
+      end
+      unless has_table?(model_class)
+        raise ArgumentError, "#{model_class} has no database table"
+      end
+      model_class
     end
   end
 end

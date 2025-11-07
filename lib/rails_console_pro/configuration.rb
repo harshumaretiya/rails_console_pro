@@ -72,6 +72,10 @@ module RailsConsolePro
     attr_accessor :pagination_threshold
     attr_accessor :pagination_page_size
 
+    # Stats calculation settings
+    attr_accessor :stats_large_table_threshold
+    attr_accessor :stats_skip_distinct_threshold
+
     def initialize
       # Default feature toggles - all enabled
       @enabled = true
@@ -130,6 +134,10 @@ module RailsConsolePro
       @pagination_enabled = true
       @pagination_threshold = 10  # Automatically paginate collections with 10+ items
       @pagination_page_size = 5   # Show 5 records per page
+
+      # Default stats calculation settings
+      @stats_large_table_threshold = 10_000  # Consider table large if it has 10k+ records
+      @stats_skip_distinct_threshold = 10_000  # Skip distinct count for tables with 10k+ records
     end
 
     # Set color scheme (dark, light, or custom)

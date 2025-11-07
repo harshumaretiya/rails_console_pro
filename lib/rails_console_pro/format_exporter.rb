@@ -116,102 +116,31 @@ module RailsConsolePro
     end
 
     def serialize_schema_result(result)
-      model = result.model
-      {
-        'type' => 'schema_inspection',
-        'model' => model.name,
-        'table_name' => model.table_name,
-        'columns' => serialize_columns(model),
-        'indexes' => serialize_indexes(model),
-        'associations' => serialize_associations(model),
-        'validations' => serialize_validations(model),
-        'scopes' => serialize_scopes(model),
-        'database' => serialize_database_info(model)
-      }
+      Serializers::SchemaSerializer.serialize(result, self)
     end
 
     def serialize_explain_result(result)
-      {
-        'type' => 'sql_explain',
-        'sql' => result.sql,
-        'execution_time' => result.execution_time,
-        'explain_output' => format_explain_output(result.explain_output),
-        'indexes_used' => result.indexes_used,
-        'recommendations' => result.recommendations,
-        'statistics' => result.statistics,
-        'slow_query' => result.slow_query?,
-        'has_indexes' => result.has_indexes?
-      }
+      Serializers::ExplainSerializer.serialize(result, self)
     end
 
     def serialize_stats_result(result)
-      {
-        'type' => 'statistics',
-        'model' => result.model.name,
-        'record_count' => result.record_count,
-        'growth_rate' => result.growth_rate,
-        'table_size' => result.table_size,
-        'index_usage' => serialize_data(result.index_usage),
-        'column_stats' => serialize_data(result.column_stats),
-        'timestamp' => result.timestamp.iso8601,
-        'has_growth_data' => result.has_growth_data?,
-        'has_table_size' => result.has_table_size?,
-        'has_index_data' => result.has_index_data?
-      }
+      Serializers::StatsSerializer.serialize(result, self)
     end
 
     def serialize_diff_result(result)
-      {
-        'type' => 'diff_comparison',
-        'object1_type' => result.object1_type,
-        'object2_type' => result.object2_type,
-        'identical' => result.identical,
-        'different_types' => result.different_types?,
-        'diff_count' => result.diff_count,
-        'has_differences' => result.has_differences?,
-        'differences' => serialize_data(result.differences),
-        'object1' => serialize_data(result.object1),
-        'object2' => serialize_data(result.object2),
-        'timestamp' => result.timestamp.iso8601
-      }
+      Serializers::DiffSerializer.serialize(result, self)
     end
 
     def serialize_active_record(record)
-      {
-        'type' => 'active_record',
-        'class' => record.class.name,
-        'id' => record.id,
-        'attributes' => record.attributes,
-        'errors' => record.errors.any? ? record.errors.full_messages : nil
-      }.compact
+      Serializers::ActiveRecordSerializer.serialize(record, self)
     end
 
     def serialize_relation(relation)
-      records = relation.to_a
-      {
-        'type' => 'active_record_relation',
-        'model' => relation.klass.name,
-        'count' => records.size,
-        'records' => records.map { |r| serialize_active_record(r) },
-        'sql' => relation.to_sql
-      }
+      Serializers::RelationSerializer.serialize(relation, self)
     end
 
     def serialize_array(array)
-      if array.all? { |item| item.is_a?(ActiveRecord::Base) }
-        {
-          'type' => 'active_record_collection',
-          'model' => array.first.class.name,
-          'count' => array.size,
-          'records' => array.map { |r| serialize_active_record(r) }
-        }
-      else
-        {
-          'type' => 'array',
-          'count' => array.size,
-          'items' => array.map { |item| serialize_data(item) }
-        }
-      end
+      Serializers::ArraySerializer.serialize(array, self)
     end
 
     def serialize_hash(hash)
@@ -232,113 +161,6 @@ module RailsConsolePro
       }
     end
 
-    def serialize_columns(model)
-      model.columns.map do |column|
-        {
-          'name' => column.name.to_s,
-          'type' => column.type.to_s,
-          'null' => column.null,
-          'default' => column.default,
-          'limit' => column.limit,
-          'precision' => column.precision,
-          'scale' => column.scale
-        }.compact
-      end
-    end
-
-    def serialize_indexes(model)
-      model.connection.indexes(model.table_name).map do |index|
-        where_clause = if index.where.is_a?(Regexp)
-                         index.where.to_s
-                       else
-                         index.where
-                       end
-        {
-          'name' => index.name.to_s,
-          'columns' => index.columns.map(&:to_s),
-          'unique' => index.unique,
-          'where' => where_clause
-        }.compact
-      end
-    end
-
-    def serialize_associations(model)
-      associations = {}
-      %i[belongs_to has_one has_many has_and_belongs_to_many].each do |macro|
-        assocs = model.reflect_on_all_associations(macro)
-        next if assocs.empty?
-
-        associations[macro.to_s] = assocs.map do |assoc|
-          {
-            'name' => assoc.name.to_s,
-            'class_name' => assoc.class_name,
-            'foreign_key' => assoc.respond_to?(:foreign_key) ? assoc.foreign_key : nil,
-            'dependent' => assoc.options[:dependent]&.to_s,
-            'optional' => assoc.options[:optional],
-            'through' => assoc.options[:through]&.to_s,
-            'join_table' => assoc.respond_to?(:join_table) ? assoc.join_table : nil
-          }.compact
-        end
-      end
-      associations
-    end
-
-    def serialize_validations(model)
-      validators_by_attr = model.validators.each_with_object({}) do |validator, hash|
-        validator.attributes.each do |attr|
-          attr_key = attr.is_a?(Symbol) ? attr.to_s : attr
-          (hash[attr_key] ||= []) << {
-            type: validator.class.name.split('::').last.gsub('Validator', ''),
-            options: serialize_options(validator.options)
-          }
-        end
-      end
-      validators_by_attr
-    end
-
-    def serialize_options(options)
-      return nil if options.nil?
-      return options if options.empty?
-      
-      options.each_with_object({}) do |(key, value), result|
-        string_key = key.is_a?(Symbol) ? key.to_s : key
-        result[string_key] = case value
-        when Symbol
-          value.to_s
-        when Regexp
-          value.to_s
-        when Array
-          value.map { |v| v.is_a?(Symbol) || v.is_a?(Regexp) ? v.to_s : serialize_data(v) }
-        else
-          serialize_data(value)
-        end
-      end
-    end
-
-    def serialize_scopes(model)
-      return [] unless model.respond_to?(:scopes) && model.scopes.any?
-
-      model.scopes.keys.map(&:to_s)
-    end
-
-    def serialize_database_info(model)
-      connection = model.connection
-      {
-        adapter: connection.adapter_name,
-        database: connection.respond_to?(:current_database) ? connection.current_database : nil
-      }.compact
-    end
-
-    def format_explain_output(explain_output)
-      case explain_output
-      when String
-        explain_output
-      when Array
-        explain_output.map { |row| row.is_a?(Hash) ? row : row.to_s }
-      else
-        explain_output.inspect
-      end
-    end
 
     def generate_html(data, title:, style:)
       html_title = escape_html(title)
