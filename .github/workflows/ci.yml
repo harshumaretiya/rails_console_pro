@@ -23,7 +23,11 @@ jobs:
         bundler-cache: true
     - name: Install dependencies
       run: |
-        gem install bundler
+        if ruby -v | grep -qE '3\.[01]\.'; then
+          gem install bundler -v 2.4.22
+        else
+          gem install bundler -v 2.7.2
+        fi
         bundle install
     - name: Run tests
       run: bundle exec rspec
