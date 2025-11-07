@@ -70,3 +70,7 @@ export stats(User) user_stats.json
 - **Index Usage**: Which indexes are used frequently
 - **Column Statistics**: Unique values, distributions, ranges (for smaller tables)
 
+## Screenshots
+
+<img width="1119" height="714" alt="Screenshot 2025-11-07 at 11 44 01 AM" src="https://github.com/user-attachments/assets/a175cb8c-1bea-4819-a80b-3f0bbb0d1a75" />
+
