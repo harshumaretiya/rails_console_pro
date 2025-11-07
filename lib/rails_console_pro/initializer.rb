@@ -8,6 +8,9 @@ module RailsConsolePro
 
   # Singleton Pastel instance
   PASTEL = Pastel.new(enabled: TTY::Color.color?)
+  
+  # Require ColorHelper early since it's used throughout
+  require_relative 'color_helper'
 
   # Configuration instance
   def config
@@ -22,7 +25,6 @@ module RailsConsolePro
 
   # Autoload all components
   autoload :Configuration,          "rails_console_pro/configuration"
-  autoload :ColorHelper,            "rails_console_pro/color_helper"
   autoload :BasePrinter,            "rails_console_pro/base_printer"
   autoload :ModelValidator,         "rails_console_pro/model_validator"
   autoload :SchemaInspectorResult,  "rails_console_pro/schema_inspector_result"
@@ -57,7 +59,7 @@ module RailsConsolePro
   rescue => e
     # Show error in development to help debug
     if Rails.env.development? || ENV['RAILS_CONSOLE_PRO_DEBUG']
-      pastel = ColorHelper.pastel
+      pastel = PASTEL
       output.puts pastel.red.bold("💥 RailsConsolePro Error: #{e.class}: #{e.message}")
       output.puts pastel.dim(e.backtrace.first(5).join("\n"))
     end
@@ -105,7 +107,7 @@ module RailsConsolePro
   end
 
   def handle_error(output, error, value, pry_instance)
-    pastel = ColorHelper.pastel
+    pastel = PASTEL
     output.puts pastel.red.bold("💥 #{error.class}: #{error.message}")
     output.puts pastel.dim(error.backtrace.first(3).join("\n"))
     default_print(output, value, pry_instance)
@@ -169,7 +171,7 @@ end
 
 # Print welcome message if enabled (only for Pry)
 if RailsConsolePro.config.show_welcome_message && defined?(Pry)
-  pastel = ColorHelper.pastel
+  pastel = RailsConsolePro::PASTEL
   puts pastel.bright_green("🚀 Rails Console Pro Loaded!")
   puts pastel.cyan("📊 Use `schema ModelName`, `explain Query`, `stats ModelName`, `diff obj1, obj2`, or `navigate ModelName`")
   puts pastel.dim("💾 Export support: Use `.to_json`, `.to_yaml`, `.to_html`, or `.export_to_file` on any result")

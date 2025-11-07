@@ -9,7 +9,7 @@ module RailsConsolePro
       protected
 
       def pastel
-        ColorHelper.pastel
+        RailsConsolePro::ColorHelper.pastel
       end
     end
   end
