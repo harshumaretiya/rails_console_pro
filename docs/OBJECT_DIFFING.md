@@ -85,3 +85,9 @@ diff(user1, user2).to_json
 - **Multiple Object Types**: Works with ActiveRecord, Hash, and more
 - **Export Support**: Export diff results to JSON/YAML/HTML
 
+## Screenshots
+
+<img width="1057" height="650" alt="Screenshot 2025-11-07 at 11 27 23 AM" src="https://github.com/user-attachments/assets/ca9fce82-8ed8-4506-907b-75e07735ec66" />
+
+
+
