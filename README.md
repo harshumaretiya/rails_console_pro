@@ -1,7 +1,7 @@
 # Rails Console Pro
 
 [![Gem Version](https://badge.fury.io/rb/rails_console_pro.svg)](https://badge.fury.io/rb/rails_console_pro)
-[![Build Status](https://github.com/yourusername/rails_console_pro/workflows/CI/badge.svg)](https://github.com/yourusername/rails_console_pro/actions)
+[![Build Status](https://github.com/harshumaretiya/rails_console_pro/workflows/CI/badge.svg)](https://github.com/harshumaretiya/rails_console_pro/actions)
 
 **Enhanced Rails console with powerful debugging tools and beautiful formatting.**
 
@@ -111,7 +111,7 @@ end
 
 ## 🤝 Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/yourusername/rails_console_pro.
+Bug reports and pull requests are welcome on GitHub at https://github.com/harshumaretiya/rails_console_pro.
 
 ## 📝 License
 

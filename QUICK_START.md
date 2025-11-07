@@ -108,5 +108,5 @@ rails generate rails_console_pro:install
 ## Need Help?
 
 - Full documentation: See [README.md](README.md)
-- Issues: https://github.com/yourusername/rails_console_pro/issues
+- Issues: https://github.com/harshumaretiya/rails_console_pro/issues
 

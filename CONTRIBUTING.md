@@ -6,7 +6,7 @@ Thank you for your interest in contributing to Rails Console Pro!
 
 1. **Fork and clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/rails_console_pro.git
+   git clone https://github.com/harshumaretiya/rails_console_pro.git
    cd rails_console_pro
    ```
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Rails Console Pro Configuration
-# See https://github.com/yourusername/rails_console_pro for documentation
+# See https://github.com/harshumaretiya/rails_console_pro for documentation
 
 RailsConsolePro.configure do |config|
   # Enable/disable features

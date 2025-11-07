@@ -20,13 +20,12 @@ Gem::Specification.new do |spec|
     - Export to JSON, YAML, and HTML
     - Smart pagination for large collections
   DESC
-  spec.homepage      = "https://github.com/yourusername/rails_console_pro"
+  spec.homepage      = "https://github.com/harshumaretiya/rails_console_pro"
   spec.license       = "MIT"
   spec.required_ruby_version = ">= 3.0.0"
 
-  spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/yourusername/rails_console_pro"
-  spec.metadata["changelog_uri"] = "https://github.com/yourusername/rails_console_pro/blob/main/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://github.com/harshumaretiya/rails_console_pro"
+  spec.metadata["changelog_uri"] = "https://github.com/harshumaretiya/rails_console_pro/blob/main/CHANGELOG.md"
   spec.metadata["rubygems_mfa_required"] = "true"
 
   # Specify which files should be added to the gem when it is released.
@@ -54,7 +53,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.12"
-  spec.add_development_dependency "rails", ">= 6.0"
+  spec.add_development_dependency "rails", "~> 6.0"
   spec.add_development_dependency "sqlite3", "~> 2.1"
 end
 
