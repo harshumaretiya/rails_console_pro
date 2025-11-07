@@ -84,3 +84,8 @@ end
 - **Clean Layout**: Well-organized, readable output
 - **Dark/Light Themes**: Choose your preferred color scheme
 
+## Screenshots
+
+<img width="1117" height="551" alt="Screenshot 2025-11-07 at 11 42 52 AM" src="https://github.com/user-attachments/assets/2e77e0d5-8fa1-4249-8b0f-f8d16e829d99" />
+
+
