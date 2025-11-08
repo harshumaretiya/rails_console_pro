@@ -2,6 +2,8 @@
 
 require 'rails_helper'
 require_relative 'spec_helper'
+require 'tmpdir'
+require 'fileutils'
 
 RSpec.describe RailsConsolePro::Commands, type: :rails_console_pro do
   describe '.schema' do
@@ -447,6 +449,32 @@ RSpec.describe RailsConsolePro::Commands, type: :rails_console_pro do
         result = described_class.export(schema_result, '/invalid/path/file.json')
         expect(result).to be_nil
       end
+    end
+  end
+
+  describe '.snippets' do
+    let(:store_dir) { Dir.mktmpdir('rails_console_pro_commands_snippets') }
+    let(:store_path) { File.join(store_dir, 'snippets.yml') }
+
+    before do
+      RailsConsolePro.configure do |config|
+        config.snippets_command_enabled = true
+        config.snippet_store_path = store_path
+      end
+    end
+
+    after do
+      FileUtils.rm_rf(store_dir)
+    end
+
+    it 'adds and lists snippets' do
+      result = described_class.snippets(:add, "User.count", description: "Count users")
+      expect(result).to be_a(RailsConsolePro::Snippets::SingleResult)
+      expect(result.created?).to be true
+
+      collection = described_class.snippets(:list)
+      expect(collection).to be_a(RailsConsolePro::Snippets::CollectionResult)
+      expect(collection.size).to eq(1)
     end
   end
 end

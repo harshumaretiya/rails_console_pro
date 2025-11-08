@@ -6,7 +6,11 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
-  gem "rspec-rails", "~> 7.0"
+  gem "sqlite3", "~> 1.4"
+  gem "bigdecimal"
+  gem "mutex_m"
+  gem "drb"
+  gem "rspec-rails", "~> 5.1"
   gem "pry-byebug"
 end
 

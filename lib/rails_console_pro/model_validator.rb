@@ -27,7 +27,7 @@ module RailsConsolePro
     # Check if model is abstract
     def abstract_class?(model_class)
       return false unless valid_model?(model_class)
-      model_class.abstract_class?
+      !!model_class.abstract_class?
     end
 
     # Check if model uses Single Table Inheritance (STI)

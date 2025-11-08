@@ -36,6 +36,7 @@ module RailsConsolePro
   autoload :FormatExporter,         "rails_console_pro/format_exporter"
   autoload :ErrorHandler,           "rails_console_pro/error_handler"
   autoload :Paginator,              "rails_console_pro/paginator"
+  autoload :Snippets,               "rails_console_pro/snippets"
 
   module Printers
     autoload :ActiveRecordPrinter,  "rails_console_pro/printers/active_record_printer"
@@ -45,6 +46,8 @@ module RailsConsolePro
     autoload :ExplainPrinter,       "rails_console_pro/printers/explain_printer"
     autoload :StatsPrinter,         "rails_console_pro/printers/stats_printer"
     autoload :DiffPrinter,          "rails_console_pro/printers/diff_printer"
+    autoload :SnippetCollectionPrinter, "rails_console_pro/printers/snippet_collection_printer"
+    autoload :SnippetPrinter,           "rails_console_pro/printers/snippet_printer"
   end
 
   # Main dispatcher - optimized with early returns
@@ -88,6 +91,12 @@ module RailsConsolePro
     return Printers::ExplainPrinter if value.is_a?(ExplainResult)
     return Printers::StatsPrinter if value.is_a?(StatsResult)
     return Printers::DiffPrinter if value.is_a?(DiffResult)
+    if defined?(Snippets::CollectionResult) && value.is_a?(Snippets::CollectionResult)
+      return Printers::SnippetCollectionPrinter
+    end
+    if defined?(Snippets::SingleResult) && value.is_a?(Snippets::SingleResult)
+      return Printers::SnippetPrinter
+    end
     
     # Fallback to base printer
     BasePrinter
@@ -139,6 +148,7 @@ require_relative 'services/stats_calculator'
 require_relative 'services/table_size_calculator'
 require_relative 'services/index_analyzer'
 require_relative 'services/column_stats_calculator'
+require_relative 'services/snippet_repository'
 
 # Load command classes (needed by Commands module)
 require_relative 'commands/base_command'
@@ -147,6 +157,7 @@ require_relative 'commands/explain_command'
 require_relative 'commands/stats_command'
 require_relative 'commands/diff_command'
 require_relative 'commands/export_command'
+require_relative 'commands/snippets_command'
 
 # Load Commands module (uses command classes)
 require_relative 'commands'

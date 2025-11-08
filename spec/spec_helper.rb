@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
+require "logger"
 
 # Load ActiveRecord before requiring rails_console_pro since it references ActiveRecord::Base
 require "active_record"

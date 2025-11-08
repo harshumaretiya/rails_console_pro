@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'tmpdir'
+require 'pathname'
+
 module RailsConsolePro
   # Configuration class for Enhanced Console Printer
   class Configuration
@@ -45,10 +48,12 @@ module RailsConsolePro
     attr_accessor :navigate_command_enabled
     attr_accessor :stats_command_enabled
     attr_accessor :diff_command_enabled
+    attr_accessor :snippets_command_enabled
     attr_accessor :active_record_printer_enabled
     attr_accessor :relation_printer_enabled
     attr_accessor :collection_printer_enabled
     attr_accessor :export_enabled
+    attr_accessor :snippet_store_path
 
     # Color customization
     attr_accessor :color_scheme
@@ -84,10 +89,12 @@ module RailsConsolePro
       @navigate_command_enabled = true
       @stats_command_enabled = true
       @diff_command_enabled = true
+      @snippets_command_enabled = true
       @active_record_printer_enabled = true
       @relation_printer_enabled = true
       @collection_printer_enabled = true
       @export_enabled = true
+      @snippet_store_path = default_snippet_store_path
 
       # Default color scheme
       @color_scheme = :dark
@@ -213,6 +220,22 @@ module RailsConsolePro
     # Reset to defaults
     def reset
       initialize
+    end
+
+    private
+
+    def default_snippet_store_path
+      base_path =
+        if defined?(Rails) && Rails.respond_to?(:root) && Rails.root
+          Rails.root.join('tmp', 'rails_console_pro')
+        else
+          File.expand_path(File.join(Dir.respond_to?(:pwd) ? Dir.pwd : Dir.tmpdir, 'tmp', 'rails_console_pro'))
+        end
+
+      base_path = Pathname.new(base_path) unless base_path.is_a?(Pathname)
+      (base_path + 'snippets.yml').to_s
+    rescue StandardError
+      File.join(Dir.tmpdir, 'rails_console_pro', 'snippets.yml')
     end
   end
 end

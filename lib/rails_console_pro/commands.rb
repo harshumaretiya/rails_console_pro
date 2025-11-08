@@ -30,5 +30,10 @@ module RailsConsolePro
     def diff(object1, object2)
       DiffCommand.new.execute(object1, object2)
     end
+
+    # Snippets command
+    def snippets(action = :list, *args, **kwargs, &block)
+      SnippetsCommand.new.execute(action, *args, **kwargs, &block)
+    end
   end
 end

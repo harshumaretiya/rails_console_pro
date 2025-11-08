@@ -59,6 +59,13 @@ export schema(User) user_schema.json
 ```
 [Learn more →](docs/EXPORT.md)
 
+### Snippet Library
+```ruby
+snippets(:add, "User.where(active: true).count", description: "Active users", tags: %w[users metrics])
+snippets(:list)
+```
+[Learn more →](docs/SNIPPETS.md)
+
 ### Beautiful Formatting
 ```ruby
 User.first  # Automatically formatted with colors
@@ -103,6 +110,7 @@ rails generate rails_console_pro:install
 - [Association Navigation](docs/ASSOCIATION_NAVIGATION.md)
 - [Object Diffing](docs/OBJECT_DIFFING.md)
 - [Export](docs/EXPORT.md)
+- [Snippets](docs/SNIPPETS.md)
 - [Formatting](docs/FORMATTING.md)
 
 ## Need Help?
