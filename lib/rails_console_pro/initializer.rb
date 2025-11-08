@@ -32,6 +32,7 @@ module RailsConsolePro
   autoload :StatsResult,            "rails_console_pro/stats_result"
   autoload :DiffResult,             "rails_console_pro/diff_result"
   autoload :ProfileResult,          "rails_console_pro/profile_result"
+  autoload :QueueInsightsResult,    "rails_console_pro/queue_insights_result"
   autoload :AssociationNavigator,  "rails_console_pro/association_navigator"
   autoload :Commands,               "rails_console_pro/commands"
   autoload :FormatExporter,         "rails_console_pro/format_exporter"
@@ -50,6 +51,7 @@ module RailsConsolePro
     autoload :ProfilePrinter,       "rails_console_pro/printers/profile_printer"
     autoload :SnippetCollectionPrinter, "rails_console_pro/printers/snippet_collection_printer"
     autoload :SnippetPrinter,           "rails_console_pro/printers/snippet_printer"
+    autoload :QueueInsightsPrinter, "rails_console_pro/printers/queue_insights_printer"
   end
 
   # Main dispatcher - optimized with early returns
@@ -94,6 +96,7 @@ module RailsConsolePro
     return Printers::StatsPrinter if value.is_a?(StatsResult)
     return Printers::DiffPrinter if value.is_a?(DiffResult)
     return Printers::ProfilePrinter if value.is_a?(ProfileResult)
+    return Printers::QueueInsightsPrinter if value.is_a?(QueueInsightsResult)
     if defined?(Snippets::CollectionResult) && value.is_a?(Snippets::CollectionResult)
       return Printers::SnippetCollectionPrinter
     end
@@ -153,6 +156,8 @@ require_relative 'services/index_analyzer'
 require_relative 'services/column_stats_calculator'
 require_relative 'services/profile_collector'
 require_relative 'services/snippet_repository'
+require_relative 'services/queue_action_service'
+require_relative 'services/queue_insight_fetcher'
 
 # Load command classes (needed by Commands module)
 require_relative 'commands/base_command'
@@ -163,6 +168,7 @@ require_relative 'commands/diff_command'
 require_relative 'commands/export_command'
 require_relative 'commands/snippets_command'
 require_relative 'commands/profile_command'
+require_relative 'commands/jobs_command'
 
 # Load Commands module (uses command classes)
 require_relative 'commands'

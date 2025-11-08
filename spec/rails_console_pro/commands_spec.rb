@@ -244,6 +244,96 @@ RSpec.describe RailsConsolePro::Commands, type: :rails_console_pro do
     end
   end
 
+  describe '.jobs' do
+    let(:fetcher) { instance_double(RailsConsolePro::Services::QueueInsightFetcher) }
+    let(:action_service) { instance_double(RailsConsolePro::Services::QueueActionService) }
+    let(:enqueued_job) do
+      RailsConsolePro::QueueInsightsResult::JobSummary.new(
+        id: 'enq-1',
+        job_class: 'NotifyUsersJob',
+        queue: 'default',
+        args: ['arg1'],
+        enqueued_at: Time.now,
+        scheduled_at: nil,
+        attempts: 0,
+        error: nil,
+        metadata: {}
+      )
+    end
+    let(:retry_job) do
+      RailsConsolePro::QueueInsightsResult::JobSummary.new(
+        id: 'retry-1',
+        job_class: 'ReminderJob',
+        queue: 'mailers',
+        args: ['foo'],
+        enqueued_at: Time.now,
+        scheduled_at: nil,
+        attempts: 2,
+        error: 'boom',
+        metadata: {}
+      )
+    end
+    let(:result) do
+      RailsConsolePro::QueueInsightsResult.new(
+        adapter_name: 'TestAdapter',
+        adapter_type: 'ActiveJob',
+        enqueued_jobs: [enqueued_job],
+        retry_jobs: [retry_job],
+        recent_executions: [],
+        meta: {},
+        warnings: []
+      )
+    end
+
+    before do
+      stub_const('ActiveJob::Base', Class.new) unless defined?(ActiveJob::Base)
+      allow(RailsConsolePro::Services::QueueInsightFetcher).to receive(:new).and_return(fetcher)
+      allow(fetcher).to receive(:fetch).and_return(result)
+      allow(RailsConsolePro::Services::QueueActionService).to receive(:new).and_return(action_service)
+      allow(action_service).to receive(:perform).and_return(nil)
+    end
+
+    it 'returns QueueInsightsResult' do
+      response = described_class.jobs(limit: 5)
+      expect(response).to be_a(RailsConsolePro::QueueInsightsResult)
+      expect(response.enqueued_jobs).to eq(result.enqueued_jobs)
+      expect(response.retry_jobs).to eq(result.retry_jobs)
+    end
+
+    it 'normalizes numeric argument as limit' do
+      described_class.jobs(10)
+      expect(fetcher).to have_received(:fetch).with(limit: 10)
+    end
+
+    it 'filters by status' do
+      filtered = described_class.jobs(status: 'retry')
+      expect(filtered.enqueued_jobs).to be_empty
+      expect(filtered.retry_jobs).to eq([retry_job])
+    end
+
+    it 'filters by job class' do
+      filtered = described_class.jobs(job_class: 'ReminderJob')
+      expect(filtered.enqueued_jobs).to be_empty
+      expect(filtered.retry_jobs).to eq([retry_job])
+    end
+
+    it 'adds warning when filter yields no results' do
+      filtered = described_class.jobs(job_class: 'UnknownJob')
+      expect(filtered.enqueued_jobs).to be_empty
+      expect(filtered.retry_jobs).to be_empty
+      expect(filtered.warnings).to include("No jobs matching class filter 'UnknownJob'.")
+    end
+
+    it 'invokes action service for retry option' do
+      action_result = RailsConsolePro::Services::QueueActionService::ActionResult.new(success: true, message: 'Retried')
+      allow(action_service).to receive(:perform).and_return(action_result)
+
+      described_class.jobs(retry: 'retry-1')
+
+      expect(action_service).to have_received(:perform).with(action: :retry, jid: 'retry-1', queue: nil)
+    end
+  end
+
   describe '.profile' do
     context 'with block' do
       it 'returns ProfileResult with query statistics' do

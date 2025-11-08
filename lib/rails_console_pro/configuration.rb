@@ -50,6 +50,7 @@ module RailsConsolePro
     attr_accessor :diff_command_enabled
     attr_accessor :snippets_command_enabled
     attr_accessor :profile_command_enabled
+    attr_accessor :queue_command_enabled
     attr_accessor :active_record_printer_enabled
     attr_accessor :relation_printer_enabled
     attr_accessor :collection_printer_enabled
@@ -97,6 +98,7 @@ module RailsConsolePro
       @diff_command_enabled = true
       @snippets_command_enabled = true
       @profile_command_enabled = true
+      @queue_command_enabled = true
       @active_record_printer_enabled = true
       @relation_printer_enabled = true
       @collection_printer_enabled = true
@@ -209,6 +211,7 @@ module RailsConsolePro
       @navigate_command_enabled = false
       @stats_command_enabled = false
       @diff_command_enabled = false
+      @queue_command_enabled = false
       @active_record_printer_enabled = false
       @relation_printer_enabled = false
       @collection_printer_enabled = false
@@ -223,6 +226,7 @@ module RailsConsolePro
       @navigate_command_enabled = true
       @stats_command_enabled = true
       @diff_command_enabled = true
+      @queue_command_enabled = true
       @active_record_printer_enabled = true
       @relation_printer_enabled = true
       @collection_printer_enabled = true

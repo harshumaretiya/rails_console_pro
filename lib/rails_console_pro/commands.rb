@@ -36,6 +36,11 @@ module RailsConsolePro
     ProfileCommand.new.execute(target, *args, **kwargs, &block)
   end
 
+    # Queue insights command
+    def jobs(options = {})
+      JobsCommand.new.execute(options)
+    end
+
     # Snippets command
     def snippets(action = :list, *args, **kwargs, &block)
       SnippetsCommand.new.execute(action, *args, **kwargs, &block)

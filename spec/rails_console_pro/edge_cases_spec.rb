@@ -367,14 +367,22 @@ RSpec.describe 'Enhanced Console Printer Edge Cases', type: :rails_console_pro d
 
   describe 'Memory and performance' do
     it 'does not leak memory on repeated calls' do
-      initial_memory = `ps -o rss= -p #{Process.pid}`.to_i
+      begin
+        initial_memory = `ps -o rss= -p #{Process.pid}`.to_i
+      rescue Errno::EPERM
+        skip 'ps command not permitted in this environment'
+      end
       
       100.times do
         RailsConsolePro::Commands.schema(User)
       end
       
       # Memory should not grow significantly
-      final_memory = `ps -o rss= -p #{Process.pid}`.to_i
+      final_memory = begin
+        `ps -o rss= -p #{Process.pid}`.to_i
+      rescue Errno::EPERM
+        skip 'ps command not permitted in this environment'
+      end
       memory_growth = final_memory - initial_memory
       
       # Allow some growth but not excessive (10MB threshold)

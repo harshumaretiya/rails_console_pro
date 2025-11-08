@@ -15,6 +15,7 @@ Rails Console Pro transforms your Rails console into a powerful debugging enviro
 - 🧭 **Association Navigator** - Interactive navigation through model associations
 - 📈 **Model Statistics** - Record counts, growth rates, table sizes, and index usage
 - 🔬 **Adaptive Profiling** - Profile blocks or relations with query, cache, and performance metrics
+- 🧵 **ActiveJob Insights** - Inspect and manage queues across adapters (Sidekiq, SolidQueue, Test, Async) with filters and inline actions
 - 🔄 **Object Diffing** - Compare ActiveRecord objects and highlight differences
 - 💾 **Export Capabilities** - Export to JSON, YAML, and HTML formats
 - 📄 **Smart Pagination** - Automatic pagination for large collections
@@ -67,6 +68,12 @@ export schema(User) user_schema.json
 
 # Profiling
 profile('Load users') { User.active.includes(:posts).limit(10).to_a }
+
+# Queue insights
+jobs(limit: 10, queue: 'mailers')
+jobs status=retry class=ReminderJob
+jobs retry=abcdef123456
+jobs details=abcdef123456
 ```
 
 See [QUICK_START.md](QUICK_START.md) for more examples and detailed documentation for each feature.
@@ -83,6 +90,7 @@ RailsConsolePro.configure do |config|
   config.schema_command_enabled = true
   config.explain_command_enabled = true
   config.stats_command_enabled = true
+  config.queue_command_enabled = true
   
   # Color scheme
   config.color_scheme = :dark  # or :light
@@ -115,6 +123,7 @@ end
 - [Snippets](docs/SNIPPETS.md) - Build a reusable console snippet library
 - [Formatting](docs/FORMATTING.md) - Beautiful console output
 - [Adaptive Profiling](docs/PROFILING.md) - Measure queries, cache hits, and potential N+1 issues
+- [Queue Insights](docs/QUEUE_INSIGHTS.md) - Inspect jobs across ActiveJob adapters
 
 ## 🤝 Contributing
 

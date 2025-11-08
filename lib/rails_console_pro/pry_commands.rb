@@ -227,6 +227,71 @@ if defined?(Pry)
     end
   end
 
+  Pry::Commands.create_command "jobs" do
+    description "Inspect ActiveJob queue insights (enqueued, retries, recent executions)"
+
+    def process
+      pastel = RailsConsolePro::ColorHelper.pastel
+      unless RailsConsolePro.config.queue_command_enabled
+        output.puts pastel.yellow("Jobs command is disabled. Enable it with: RailsConsolePro.configure { |c| c.queue_command_enabled = true }")
+        return
+      end
+
+      begin
+        options = parse_options
+        result = RailsConsolePro::Commands.jobs(options)
+        if result
+          RailsConsolePro.call(output, result, pry_instance)
+        else
+          output.puts pastel.yellow("No queue insights available.")
+        end
+      rescue => e
+        output.puts pastel.red("Error: #{e.message}")
+      end
+    end
+
+    private
+
+    def parse_options
+      return {} if args.empty?
+
+      options = {}
+
+      args.each do |token|
+        case token
+        when /\A(limit|queue)=(.+)\z/i
+          key = Regexp.last_match(1).downcase.to_sym
+          value = Regexp.last_match(2)
+          value = value.to_i if key == :limit
+          options[key] = value
+        when /\Astatus=(.+)\z/i, /\A--status=(.+)\z/i
+          statuses = Regexp.last_match(1).split(',').map(&:strip).reject(&:empty?)
+          options[:status] = Array(options[:status]) + statuses
+        when /\A(class|job_class)=(.+)\z/i, /\A--class=(.+)\z/i
+          options[:job_class] = Regexp.last_match(2)
+        when /\Aretry=(.+)\z/i, /\A--retry=(.+)\z/i
+          options[:retry] = Regexp.last_match(1)
+        when /\Adelete=(.+)\z/i, /\A--delete=(.+)\z/i
+          options[:delete] = Regexp.last_match(1)
+        when /\Adetails?=(.+)\z/i, /\A--details?=(.+)\z/i
+          options[:details] = Regexp.last_match(1)
+        when '--retry-only'
+          options[:status] = Array(options[:status]) + ['retry']
+        when '--enqueued-only'
+          options[:status] = Array(options[:status]) + ['enqueued']
+        when '--recent-only', '--executing-only', '--running-only'
+          options[:status] = Array(options[:status]) + ['recent']
+        when /\A\d+\z/
+          options[:limit] = token.to_i
+        else
+          options[:queue] ||= token
+        end
+      end
+
+      options
+    end
+  end
+
   Pry::Commands.create_command "diff" do
     description "Compare two objects and highlight differences"
     
