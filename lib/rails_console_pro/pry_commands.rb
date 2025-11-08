@@ -32,6 +32,47 @@ if defined?(Pry)
     end
   end
 
+  Pry::Commands.create_command "profile" do
+    description "Profile a block, callable, or relation and report query stats"
+
+    def process
+      pastel = RailsConsolePro::ColorHelper.pastel
+      unless RailsConsolePro.config.profile_command_enabled
+        output.puts pastel.yellow("Profile command is disabled. Enable it with: RailsConsolePro.configure { |c| c.profile_command_enabled = true }")
+        return
+      end
+
+      if args.empty?
+        show_usage
+        return
+      end
+
+      begin
+        expression = args.join(' ')
+        profile_target = eval(expression, target)
+        result = RailsConsolePro::Commands.profile(profile_target)
+        RailsConsolePro.call(output, result, pry_instance) if result
+      rescue SyntaxError => e
+        output.puts pastel.red("Syntax Error: #{e.message}")
+        show_usage
+      rescue => e
+        output.puts pastel.red("Error: #{e.message}")
+      end
+    end
+
+    private
+
+    def show_usage
+      pastel = RailsConsolePro::ColorHelper.pastel
+      output.puts pastel.red("Usage: profile expression")
+      output.puts pastel.yellow("Examples:")
+      output.puts pastel.cyan("  profile User.active.limit(10)")
+      output.puts pastel.cyan("  profile -> { User.includes(:posts).each { |u| u.posts.load } }")
+      output.puts pastel.yellow("")
+      output.puts pastel.yellow("Tip: For blocks, call the helper method directly: profile('Load') { User.limit(5).to_a }")
+    end
+  end
+
   Pry::Commands.create_command "explain" do
     description "Analyze SQL query execution plan"
     

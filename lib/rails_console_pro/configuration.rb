@@ -49,6 +49,7 @@ module RailsConsolePro
     attr_accessor :stats_command_enabled
     attr_accessor :diff_command_enabled
     attr_accessor :snippets_command_enabled
+    attr_accessor :profile_command_enabled
     attr_accessor :active_record_printer_enabled
     attr_accessor :relation_printer_enabled
     attr_accessor :collection_printer_enabled
@@ -81,6 +82,11 @@ module RailsConsolePro
     attr_accessor :stats_large_table_threshold
     attr_accessor :stats_skip_distinct_threshold
 
+    # Profiling settings
+    attr_accessor :profile_slow_query_threshold
+    attr_accessor :profile_duplicate_query_threshold
+    attr_accessor :profile_max_saved_queries
+
     def initialize
       # Default feature toggles - all enabled
       @enabled = true
@@ -90,6 +96,7 @@ module RailsConsolePro
       @stats_command_enabled = true
       @diff_command_enabled = true
       @snippets_command_enabled = true
+      @profile_command_enabled = true
       @active_record_printer_enabled = true
       @relation_printer_enabled = true
       @collection_printer_enabled = true
@@ -145,6 +152,11 @@ module RailsConsolePro
       # Default stats calculation settings
       @stats_large_table_threshold = 10_000  # Consider table large if it has 10k+ records
       @stats_skip_distinct_threshold = 10_000  # Skip distinct count for tables with 10k+ records
+
+      # Default profiling settings
+      @profile_slow_query_threshold = 100.0 # milliseconds
+      @profile_duplicate_query_threshold = 2
+      @profile_max_saved_queries = 10
     end
 
     # Set color scheme (dark, light, or custom)

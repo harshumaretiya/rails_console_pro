@@ -31,6 +31,11 @@ module RailsConsolePro
       DiffCommand.new.execute(object1, object2)
     end
 
+  # Profiling command
+  def profile(target = nil, *args, **kwargs, &block)
+    ProfileCommand.new.execute(target, *args, **kwargs, &block)
+  end
+
     # Snippets command
     def snippets(action = :list, *args, **kwargs, &block)
       SnippetsCommand.new.execute(action, *args, **kwargs, &block)

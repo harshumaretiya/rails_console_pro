@@ -40,6 +40,10 @@ def diff(object1, object2)
   RailsConsolePro::Commands.diff(object1, object2)
 end
 
+def profile(target = nil, *args, **kwargs, &block)
+  RailsConsolePro::Commands.profile(target, *args, **kwargs, &block)
+end
+
 def snippets(action = :list, *args, **kwargs, &block)
   RailsConsolePro::Commands.snippets(action, *args, **kwargs, &block)
 end

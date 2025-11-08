@@ -14,6 +14,7 @@ Rails Console Pro transforms your Rails console into a powerful debugging enviro
 - 🔍 **SQL Explain** - Analyze query execution plans with performance recommendations
 - 🧭 **Association Navigator** - Interactive navigation through model associations
 - 📈 **Model Statistics** - Record counts, growth rates, table sizes, and index usage
+- 🔬 **Adaptive Profiling** - Profile blocks or relations with query, cache, and performance metrics
 - 🔄 **Object Diffing** - Compare ActiveRecord objects and highlight differences
 - 💾 **Export Capabilities** - Export to JSON, YAML, and HTML formats
 - 📄 **Smart Pagination** - Automatic pagination for large collections
@@ -63,6 +64,9 @@ diff user1, user2
 
 # Export
 export schema(User) user_schema.json
+
+# Profiling
+profile('Load users') { User.active.includes(:posts).limit(10).to_a }
 ```
 
 See [QUICK_START.md](QUICK_START.md) for more examples and detailed documentation for each feature.
@@ -110,6 +114,7 @@ end
 - [Export](docs/EXPORT.md) - Export to JSON, YAML, HTML
 - [Snippets](docs/SNIPPETS.md) - Build a reusable console snippet library
 - [Formatting](docs/FORMATTING.md) - Beautiful console output
+- [Adaptive Profiling](docs/PROFILING.md) - Measure queries, cache hits, and potential N+1 issues
 
 ## 🤝 Contributing
 

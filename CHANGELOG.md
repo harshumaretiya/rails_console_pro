@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Adaptive profiling command with SQL, cache, and duplicate query analysis
+- Profile result printer, serializer, and documentation
+
 ## [0.1.0] - 2025-01-XX
 
 ### Added

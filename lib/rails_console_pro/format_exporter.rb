@@ -81,6 +81,8 @@ module RailsConsolePro
         serialize_diff_result(data)
       when ExplainResult
         serialize_explain_result(data)
+      when ProfileResult
+        serialize_profile_result(data)
       when ActiveRecord::Base
         serialize_active_record(data)
       when ActiveRecord::Relation
@@ -129,6 +131,10 @@ module RailsConsolePro
 
     def serialize_diff_result(result)
       Serializers::DiffSerializer.serialize(result, self)
+    end
+
+    def serialize_profile_result(result)
+      Serializers::ProfileSerializer.serialize(result, self)
     end
 
     def serialize_active_record(record)
@@ -388,6 +394,8 @@ module RailsConsolePro
         "Diff Comparison: #{data.object1_type} vs #{data.object2_type}"
       when ExplainResult
         "SQL Explain Analysis"
+      when ProfileResult
+        "Profile: #{data.label || 'Session'}"
       when ActiveRecord::Base
         "#{data.class.name} ##{data.id}"
       when ActiveRecord::Relation

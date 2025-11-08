@@ -31,6 +31,7 @@ module RailsConsolePro
   autoload :ExplainResult,          "rails_console_pro/explain_result"
   autoload :StatsResult,            "rails_console_pro/stats_result"
   autoload :DiffResult,             "rails_console_pro/diff_result"
+  autoload :ProfileResult,          "rails_console_pro/profile_result"
   autoload :AssociationNavigator,  "rails_console_pro/association_navigator"
   autoload :Commands,               "rails_console_pro/commands"
   autoload :FormatExporter,         "rails_console_pro/format_exporter"
@@ -46,6 +47,7 @@ module RailsConsolePro
     autoload :ExplainPrinter,       "rails_console_pro/printers/explain_printer"
     autoload :StatsPrinter,         "rails_console_pro/printers/stats_printer"
     autoload :DiffPrinter,          "rails_console_pro/printers/diff_printer"
+    autoload :ProfilePrinter,       "rails_console_pro/printers/profile_printer"
     autoload :SnippetCollectionPrinter, "rails_console_pro/printers/snippet_collection_printer"
     autoload :SnippetPrinter,           "rails_console_pro/printers/snippet_printer"
   end
@@ -91,6 +93,7 @@ module RailsConsolePro
     return Printers::ExplainPrinter if value.is_a?(ExplainResult)
     return Printers::StatsPrinter if value.is_a?(StatsResult)
     return Printers::DiffPrinter if value.is_a?(DiffResult)
+    return Printers::ProfilePrinter if value.is_a?(ProfileResult)
     if defined?(Snippets::CollectionResult) && value.is_a?(Snippets::CollectionResult)
       return Printers::SnippetCollectionPrinter
     end
@@ -148,6 +151,7 @@ require_relative 'services/stats_calculator'
 require_relative 'services/table_size_calculator'
 require_relative 'services/index_analyzer'
 require_relative 'services/column_stats_calculator'
+require_relative 'services/profile_collector'
 require_relative 'services/snippet_repository'
 
 # Load command classes (needed by Commands module)
@@ -158,6 +162,7 @@ require_relative 'commands/stats_command'
 require_relative 'commands/diff_command'
 require_relative 'commands/export_command'
 require_relative 'commands/snippets_command'
+require_relative 'commands/profile_command'
 
 # Load Commands module (uses command classes)
 require_relative 'commands'
@@ -168,6 +173,7 @@ require_relative 'serializers/schema_serializer'
 require_relative 'serializers/stats_serializer'
 require_relative 'serializers/explain_serializer'
 require_relative 'serializers/diff_serializer'
+require_relative 'serializers/profile_serializer'
 require_relative 'serializers/active_record_serializer'
 require_relative 'serializers/relation_serializer'
 require_relative 'serializers/array_serializer'

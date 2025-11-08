@@ -244,6 +244,71 @@ RSpec.describe RailsConsolePro::Commands, type: :rails_console_pro do
     end
   end
 
+  describe '.profile' do
+    context 'with block' do
+      it 'returns ProfileResult with query statistics' do
+        result = described_class.profile do
+          ActiveSupport::Notifications.instrument('sql.active_record', sql: 'SELECT 1', name: 'User Load') {}
+          :done
+        end
+
+        expect(result).to be_a(RailsConsolePro::ProfileResult)
+        expect(result.query_count).to eq(1)
+        expect(result.total_sql_duration_ms).to be >= 0
+        expect(result.result).to eq(:done)
+      end
+
+      it 'captures slow queries exceeding threshold' do
+        RailsConsolePro.config.profile_slow_query_threshold = 0.0
+
+        result = described_class.profile do
+          ActiveSupport::Notifications.instrument('sql.active_record', sql: 'SELECT 1', name: 'User Load') { sleep(0.001) }
+        end
+
+        expect(result.slow_queries?).to be true
+        expect(result.slow_queries.first.sql).to include('SELECT 1')
+      end
+
+      it 'records duplicate queries' do
+        result = described_class.profile do
+          2.times do
+            ActiveSupport::Notifications.instrument('sql.active_record', sql: 'SELECT * FROM users', name: 'User Load') {}
+          end
+        end
+
+        expect(result.duplicate_queries?).to be true
+        duplicate = result.duplicate_queries.first
+        expect(duplicate.count).to be >= 2
+        expect(duplicate.sql).to include('SELECT * FROM users')
+      end
+
+      it 'captures errors raised during profiling' do
+        result = described_class.profile do
+          raise RuntimeError, 'profile boom'
+        end
+
+        expect(result.error?).to be true
+        expect(result.error).to be_a(RuntimeError)
+        expect(result.error.message).to eq('profile boom')
+      end
+    end
+
+    context 'when disabled' do
+      before do
+        RailsConsolePro.config.profile_command_enabled = false
+      end
+
+      after do
+        RailsConsolePro.config.profile_command_enabled = true
+      end
+
+      it 'returns disabled message' do
+        message = described_class.profile { nil }
+        expect(message).to include('Profile command is disabled')
+      end
+    end
+  end
+
   describe '.explain' do
     context 'with valid relation' do
       let(:mock_relation) do
