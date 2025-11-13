@@ -56,3 +56,11 @@ def introspect(model_class, *options)
   RailsConsolePro::Commands.introspect(model_class, *options)
 end
 
+def compare(&block)
+  RailsConsolePro::Commands.compare(&block)
+end
+
+def query(model_class, &block)
+  RailsConsolePro::Commands.query(model_class, &block)
+end
+

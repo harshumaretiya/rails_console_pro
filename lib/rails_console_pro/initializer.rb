@@ -34,6 +34,9 @@ module RailsConsolePro
   autoload :ProfileResult,          "rails_console_pro/profile_result"
   autoload :QueueInsightsResult,    "rails_console_pro/queue_insights_result"
   autoload :IntrospectResult,       "rails_console_pro/introspect_result"
+  autoload :CompareResult,          "rails_console_pro/compare_result"
+  autoload :QueryBuilderResult,     "rails_console_pro/query_builder_result"
+  autoload :QueryBuilder,           "rails_console_pro/query_builder"
   autoload :AssociationNavigator,  "rails_console_pro/association_navigator"
   autoload :Commands,               "rails_console_pro/commands"
   autoload :FormatExporter,         "rails_console_pro/format_exporter"
@@ -54,6 +57,8 @@ module RailsConsolePro
     autoload :SnippetCollectionPrinter, "rails_console_pro/printers/snippet_collection_printer"
     autoload :SnippetPrinter,           "rails_console_pro/printers/snippet_printer"
     autoload :QueueInsightsPrinter, "rails_console_pro/printers/queue_insights_printer"
+    autoload :ComparePrinter,      "rails_console_pro/printers/compare_printer"
+    autoload :QueryBuilderPrinter, "rails_console_pro/printers/query_builder_printer"
   end
 
   # Main dispatcher - optimized with early returns
@@ -100,6 +105,8 @@ module RailsConsolePro
     return Printers::ProfilePrinter if value.is_a?(ProfileResult)
     return Printers::IntrospectPrinter if value.is_a?(IntrospectResult)
     return Printers::QueueInsightsPrinter if value.is_a?(QueueInsightsResult)
+    return Printers::ComparePrinter if value.is_a?(CompareResult)
+    return Printers::QueryBuilderPrinter if value.is_a?(QueryBuilderResult)
     if defined?(Snippets::CollectionResult) && value.is_a?(Snippets::CollectionResult)
       return Printers::SnippetCollectionPrinter
     end
@@ -174,6 +181,8 @@ require_relative 'commands/introspect_command'
 require_relative 'commands/snippets_command'
 require_relative 'commands/profile_command'
 require_relative 'commands/jobs_command'
+require_relative 'commands/compare_command'
+require_relative 'commands/query_builder_command'
 
 # Load Commands module (uses command classes)
 require_relative 'commands'
@@ -186,6 +195,8 @@ require_relative 'serializers/explain_serializer'
 require_relative 'serializers/diff_serializer'
 require_relative 'serializers/profile_serializer'
 require_relative 'serializers/introspect_serializer'
+require_relative 'serializers/compare_serializer'
+require_relative 'serializers/query_builder_serializer'
 require_relative 'serializers/active_record_serializer'
 require_relative 'serializers/relation_serializer'
 require_relative 'serializers/array_serializer'

@@ -52,6 +52,8 @@ module RailsConsolePro
     attr_accessor :profile_command_enabled
     attr_accessor :queue_command_enabled
     attr_accessor :introspect_command_enabled
+    attr_accessor :compare_command_enabled
+    attr_accessor :query_builder_command_enabled
     attr_accessor :active_record_printer_enabled
     attr_accessor :relation_printer_enabled
     attr_accessor :collection_printer_enabled
@@ -101,6 +103,8 @@ module RailsConsolePro
       @profile_command_enabled = true
       @queue_command_enabled = true
       @introspect_command_enabled = true
+      @compare_command_enabled = true
+      @query_builder_command_enabled = true
       @active_record_printer_enabled = true
       @relation_printer_enabled = true
       @collection_printer_enabled = true
@@ -215,6 +219,8 @@ module RailsConsolePro
       @diff_command_enabled = false
       @queue_command_enabled = false
       @introspect_command_enabled = false
+      @compare_command_enabled = false
+      @query_builder_command_enabled = false
       @active_record_printer_enabled = false
       @relation_printer_enabled = false
       @collection_printer_enabled = false
@@ -231,6 +237,8 @@ module RailsConsolePro
       @diff_command_enabled = true
       @queue_command_enabled = true
       @introspect_command_enabled = true
+      @compare_command_enabled = true
+      @query_builder_command_enabled = true
       @active_record_printer_enabled = true
       @relation_printer_enabled = true
       @collection_printer_enabled = true

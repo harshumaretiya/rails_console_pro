@@ -85,6 +85,10 @@ module RailsConsolePro
         serialize_profile_result(data)
       when IntrospectResult
         serialize_introspect_result(data)
+      when CompareResult
+        serialize_compare_result(data)
+      when QueryBuilderResult
+        serialize_query_builder_result(data)
       when ActiveRecord::Base
         serialize_active_record(data)
       when ActiveRecord::Relation
@@ -141,6 +145,14 @@ module RailsConsolePro
 
     def serialize_introspect_result(result)
       Serializers::IntrospectSerializer.serialize(result, self)
+    end
+
+    def serialize_compare_result(result)
+      Serializers::CompareSerializer.serialize(result, self)
+    end
+
+    def serialize_query_builder_result(result)
+      Serializers::QueryBuilderSerializer.serialize(result, self)
     end
 
     def serialize_active_record(record)
@@ -404,6 +416,10 @@ module RailsConsolePro
         "Profile: #{data.label || 'Session'}"
       when IntrospectResult
         "Introspection: #{data.model.name}"
+      when CompareResult
+        "Query Comparison (#{data.comparisons.size} strategies)"
+      when QueryBuilderResult
+        "Query Builder: #{data.model_class.name}"
       when ActiveRecord::Base
         "#{data.class.name} ##{data.id}"
       when ActiveRecord::Relation

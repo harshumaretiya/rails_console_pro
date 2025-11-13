@@ -50,5 +50,15 @@ module RailsConsolePro
     def introspect(model_class, *options)
       IntrospectCommand.new.execute(model_class, *options)
     end
+
+    # Query comparison command
+    def compare(&block)
+      CompareCommand.new.execute(&block)
+    end
+
+    # Query builder command
+    def query(model_class, &block)
+      QueryBuilderCommand.new.execute(model_class, &block)
+    end
   end
 end

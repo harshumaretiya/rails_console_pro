@@ -18,6 +18,8 @@ Rails Console Pro transforms your Rails console into a powerful debugging enviro
 - 🧵 **ActiveJob Insights** - Inspect and manage queues across adapters (Sidekiq, SolidQueue, Test, Async) with filters and inline actions
 - 🔄 **Object Diffing** - Compare ActiveRecord objects and highlight differences
 - 🔍 **Model Introspection** - Deep dive into callbacks, enums, concerns, scopes, validations, and method sources
+- ⚖️ **Query Comparison** - Compare multiple query strategies side-by-side to find optimal approaches
+- 🔧 **Query Builder** - Interactive DSL for building and analyzing ActiveRecord queries
 - 💾 **Export Capabilities** - Export to JSON, YAML, and HTML formats
 - 📄 **Smart Pagination** - Automatic pagination for large collections
 - 📝 **Snippet Library** - Capture, search, and reuse console snippets across sessions
@@ -81,6 +83,20 @@ introspect User
 introspect User, :callbacks
 introspect User, :enums
 introspect User, :method_name  # Find where method is defined
+
+# Query comparison
+compare do |c|
+  c.run("Eager loading") { User.includes(:posts).to_a }
+  c.run("N+1") { User.all.map(&:posts) }
+end
+
+# Query builder
+query User do
+  where(active: true)
+  includes(:posts)
+  order(:created_at)
+  limit(10)
+end.analyze  # Shows SQL + explain
 ```
 
 See [QUICK_START.md](QUICK_START.md) for more examples and detailed documentation for each feature.
@@ -98,6 +114,8 @@ RailsConsolePro.configure do |config|
   config.explain_command_enabled = true
   config.stats_command_enabled = true
   config.queue_command_enabled = true
+  config.compare_command_enabled = true
+  config.query_builder_command_enabled = true
   
   # Color scheme
   config.color_scheme = :dark  # or :light
@@ -132,6 +150,7 @@ end
 - [Formatting](docs/FORMATTING.md) - Beautiful console output
 - [Adaptive Profiling](docs/PROFILING.md) - Measure queries, cache hits, and potential N+1 issues
 - [Queue Insights](docs/QUEUE_INSIGHTS.md) - Inspect jobs across ActiveJob adapters
+- [Query Builder & Comparator](docs/QUERY_BUILDER.md) - Compare query strategies and build optimized queries
 
 ## 🤝 Contributing
 
