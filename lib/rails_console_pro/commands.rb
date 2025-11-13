@@ -45,5 +45,10 @@ module RailsConsolePro
     def snippets(action = :list, *args, **kwargs, &block)
       SnippetsCommand.new.execute(action, *args, **kwargs, &block)
     end
+
+    # Model introspection command
+    def introspect(model_class, *options)
+      IntrospectCommand.new.execute(model_class, *options)
+    end
   end
 end

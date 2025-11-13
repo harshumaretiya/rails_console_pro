@@ -17,6 +17,7 @@ Rails Console Pro transforms your Rails console into a powerful debugging enviro
 - 🔬 **Adaptive Profiling** - Profile blocks or relations with query, cache, and performance metrics
 - 🧵 **ActiveJob Insights** - Inspect and manage queues across adapters (Sidekiq, SolidQueue, Test, Async) with filters and inline actions
 - 🔄 **Object Diffing** - Compare ActiveRecord objects and highlight differences
+- 🔍 **Model Introspection** - Deep dive into callbacks, enums, concerns, scopes, validations, and method sources
 - 💾 **Export Capabilities** - Export to JSON, YAML, and HTML formats
 - 📄 **Smart Pagination** - Automatic pagination for large collections
 - 📝 **Snippet Library** - Capture, search, and reuse console snippets across sessions
@@ -74,6 +75,12 @@ jobs(limit: 10, queue: 'mailers')
 jobs status=retry class=ReminderJob
 jobs retry=abcdef123456
 jobs details=abcdef123456
+
+# Model introspection
+introspect User
+introspect User, :callbacks
+introspect User, :enums
+introspect User, :method_name  # Find where method is defined
 ```
 
 See [QUICK_START.md](QUICK_START.md) for more examples and detailed documentation for each feature.
@@ -118,6 +125,7 @@ end
 - [SQL Explain](docs/SQL_EXPLAIN.md) - Analyze query performance
 - [Model Statistics](docs/MODEL_STATISTICS.md) - Get model statistics
 - [Association Navigation](docs/ASSOCIATION_NAVIGATION.md) - Navigate model associations
+- [Model Introspection](docs/MODEL_INTROSPECTION.md) - Deep dive into callbacks, enums, concerns, and more
 - [Object Diffing](docs/OBJECT_DIFFING.md) - Compare objects
 - [Export](docs/EXPORT.md) - Export to JSON, YAML, HTML
 - [Snippets](docs/SNIPPETS.md) - Build a reusable console snippet library

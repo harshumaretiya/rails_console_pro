@@ -33,6 +33,7 @@ module RailsConsolePro
   autoload :DiffResult,             "rails_console_pro/diff_result"
   autoload :ProfileResult,          "rails_console_pro/profile_result"
   autoload :QueueInsightsResult,    "rails_console_pro/queue_insights_result"
+  autoload :IntrospectResult,       "rails_console_pro/introspect_result"
   autoload :AssociationNavigator,  "rails_console_pro/association_navigator"
   autoload :Commands,               "rails_console_pro/commands"
   autoload :FormatExporter,         "rails_console_pro/format_exporter"
@@ -49,6 +50,7 @@ module RailsConsolePro
     autoload :StatsPrinter,         "rails_console_pro/printers/stats_printer"
     autoload :DiffPrinter,          "rails_console_pro/printers/diff_printer"
     autoload :ProfilePrinter,       "rails_console_pro/printers/profile_printer"
+    autoload :IntrospectPrinter,    "rails_console_pro/printers/introspect_printer"
     autoload :SnippetCollectionPrinter, "rails_console_pro/printers/snippet_collection_printer"
     autoload :SnippetPrinter,           "rails_console_pro/printers/snippet_printer"
     autoload :QueueInsightsPrinter, "rails_console_pro/printers/queue_insights_printer"
@@ -96,6 +98,7 @@ module RailsConsolePro
     return Printers::StatsPrinter if value.is_a?(StatsResult)
     return Printers::DiffPrinter if value.is_a?(DiffResult)
     return Printers::ProfilePrinter if value.is_a?(ProfileResult)
+    return Printers::IntrospectPrinter if value.is_a?(IntrospectResult)
     return Printers::QueueInsightsPrinter if value.is_a?(QueueInsightsResult)
     if defined?(Snippets::CollectionResult) && value.is_a?(Snippets::CollectionResult)
       return Printers::SnippetCollectionPrinter
@@ -158,6 +161,7 @@ require_relative 'services/profile_collector'
 require_relative 'services/snippet_repository'
 require_relative 'services/queue_action_service'
 require_relative 'services/queue_insight_fetcher'
+require_relative 'services/introspection_collector'
 
 # Load command classes (needed by Commands module)
 require_relative 'commands/base_command'
@@ -166,6 +170,7 @@ require_relative 'commands/explain_command'
 require_relative 'commands/stats_command'
 require_relative 'commands/diff_command'
 require_relative 'commands/export_command'
+require_relative 'commands/introspect_command'
 require_relative 'commands/snippets_command'
 require_relative 'commands/profile_command'
 require_relative 'commands/jobs_command'
@@ -180,6 +185,7 @@ require_relative 'serializers/stats_serializer'
 require_relative 'serializers/explain_serializer'
 require_relative 'serializers/diff_serializer'
 require_relative 'serializers/profile_serializer'
+require_relative 'serializers/introspect_serializer'
 require_relative 'serializers/active_record_serializer'
 require_relative 'serializers/relation_serializer'
 require_relative 'serializers/array_serializer'
@@ -196,6 +202,6 @@ end
 if RailsConsolePro.config.show_welcome_message && defined?(Pry)
   pastel = RailsConsolePro::PASTEL
   puts pastel.bright_green("🚀 Rails Console Pro Loaded!")
-  puts pastel.cyan("📊 Use `schema ModelName`, `explain Query`, `stats ModelName`, `diff obj1, obj2`, or `navigate ModelName`")
+  puts pastel.cyan("📊 Use `schema`, `explain`, `stats`, `introspect`, `diff`, `navigate`, `profile`, or `jobs` commands")
   puts pastel.dim("💾 Export support: Use `.to_json`, `.to_yaml`, `.to_html`, or `.export_to_file` on any result")
 end

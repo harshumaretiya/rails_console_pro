@@ -375,5 +375,273 @@ RSpec.describe 'Enhanced Console Printer Result Objects', type: :rails_console_p
       end
     end
   end
+
+  describe RailsConsolePro::IntrospectResult do
+    let(:test_model) do
+      Class.new(ActiveRecord::Base) do
+        self.table_name = 'test_users'
+        
+        def self.table_exists?
+          true
+        end
+        
+        def self.name
+          'TestUser'
+        end
+      end
+    end
+    
+    before do
+      # Mock ModelValidator to avoid database queries for valid ActiveRecord models
+      # But still raise errors for invalid models (matching actual ModelValidator behavior)
+      allow(RailsConsolePro::ModelValidator).to receive(:validate_model!) do |model|
+        # Use the actual valid_model? method to check, but avoid database queries
+        unless RailsConsolePro::ModelValidator.valid_model?(model)
+          raise ArgumentError, "#{model} is not an ActiveRecord model"
+        end
+        model
+      end
+    end
+
+    let(:result) do
+      described_class.new(
+        model: test_model,
+        callbacks: {
+          before_validation: [{ name: :normalize_email, kind: :before, if: nil, unless: nil }]
+        },
+        enums: {
+          'status' => { mapping: { 'active' => 0, 'inactive' => 1 }, values: ['active', 'inactive'], type: :integer }
+        },
+        concerns: [
+          { name: 'Authenticatable', type: :concern, location: { file: 'app/models/concerns/authenticatable.rb', line: 1 } }
+        ],
+        scopes: {
+          active: { sql: 'SELECT * FROM test_users WHERE status = 0', values: {}, conditions: [] }
+        },
+        validations: {
+          email: [
+            { type: 'PresenceValidator', attributes: [:email], options: {}, conditions: {} }
+          ]
+        },
+        lifecycle_hooks: {
+          callbacks_count: 1,
+          validations_count: 1,
+          has_observers: false,
+          has_state_machine: false
+        }
+      )
+    end
+
+    describe '#initialize' do
+      it 'creates result with model' do
+        expect(result.model).to eq(test_model)
+      end
+
+      it 'raises error for invalid model' do
+        expect { described_class.new(model: String, callbacks: {}, enums: {}, concerns: [], scopes: {}, validations: []) }.to raise_error(ArgumentError)
+      end
+    end
+
+    describe '#==' do
+      it 'compares by model and timestamp' do
+        timestamp = Time.current
+        result1 = described_class.new(
+          model: test_model,
+          callbacks: {},
+          enums: {},
+          concerns: [],
+          scopes: {},
+          validations: [],
+          timestamp: timestamp
+        )
+        result2 = described_class.new(
+          model: test_model,
+          callbacks: {},
+          enums: {},
+          concerns: [],
+          scopes: {},
+          validations: [],
+          timestamp: timestamp
+        )
+        expect(result1).to eq(result2)
+      end
+    end
+
+    describe 'query methods' do
+      it '#has_callbacks? returns true when callbacks exist' do
+        expect(result.has_callbacks?).to be true
+      end
+
+      it '#has_callbacks? returns false when no callbacks' do
+        empty_result = described_class.new(
+          model: test_model,
+          callbacks: {},
+          enums: {},
+          concerns: [],
+          scopes: {},
+          validations: []
+        )
+        expect(empty_result.has_callbacks?).to be false
+      end
+
+      it '#has_enums? returns true when enums exist' do
+        expect(result.has_enums?).to be true
+      end
+
+      it '#has_enums? returns false when no enums' do
+        empty_result = described_class.new(
+          model: test_model,
+          callbacks: {},
+          enums: {},
+          concerns: [],
+          scopes: {},
+          validations: []
+        )
+        expect(empty_result.has_enums?).to be false
+      end
+
+      it '#has_concerns? returns true when concerns exist' do
+        expect(result.has_concerns?).to be true
+      end
+
+      it '#has_scopes? returns true when scopes exist' do
+        expect(result.has_scopes?).to be true
+      end
+
+      it '#has_validations? returns true when validations exist' do
+        expect(result.has_validations?).to be true
+      end
+    end
+
+    describe '#callbacks_by_type' do
+      it 'returns callbacks for specific type' do
+        callbacks = result.callbacks_by_type(:before_validation)
+        expect(callbacks).to be_an(Array)
+        expect(callbacks.first[:name]).to eq(:normalize_email)
+      end
+
+      it 'returns empty array for non-existent type' do
+        callbacks = result.callbacks_by_type(:nonexistent)
+        expect(callbacks).to eq([])
+      end
+    end
+
+    describe '#validations_for' do
+      it 'returns validations for attribute' do
+        validations = result.validations_for(:email)
+        expect(validations).to be_an(Array)
+      end
+
+      it 'returns empty array for non-existent attribute' do
+        validations = result.validations_for(:nonexistent)
+        expect(validations).to eq([])
+      end
+    end
+
+    describe '#enum_values' do
+      it 'returns enum values' do
+        values = result.enum_values(:status)
+        expect(values).to eq(['active', 'inactive'])
+      end
+
+      it 'returns empty array for non-existent enum' do
+        values = result.enum_values(:nonexistent)
+        expect(values).to eq([])
+      end
+    end
+
+    describe '#scope_sql' do
+      it 'returns SQL for scope' do
+        sql = result.scope_sql(:active)
+        expect(sql).to include('SELECT')
+      end
+
+      it 'returns nil for non-existent scope' do
+        sql = result.scope_sql(:nonexistent)
+        expect(sql).to be_nil
+      end
+    end
+
+    describe '#method_source' do
+      it 'delegates to IntrospectionCollector' do
+        collector = instance_double(RailsConsolePro::Services::IntrospectionCollector)
+        allow(RailsConsolePro::Services::IntrospectionCollector).to receive(:new).with(test_model).and_return(collector)
+        allow(collector).to receive(:method_source_location).with(:full_name).and_return(
+          { file: 'app/models/test_user.rb', line: 42, owner: 'TestUser', type: :model }
+        )
+
+        location = result.method_source(:full_name)
+        expect(location).to be_a(Hash)
+        expect(location[:file]).to eq('app/models/test_user.rb')
+      end
+    end
+
+    describe '#to_json' do
+      it 'returns JSON string' do
+        json = result.to_json
+        expect(json).to be_a(String)
+        expect { JSON.parse(json) }.not_to raise_error
+      end
+
+      it 'supports pretty formatting' do
+        json = result.to_json(pretty: true)
+        expect(json).to be_a(String)
+      end
+    end
+
+    describe '#to_yaml' do
+      it 'returns YAML string' do
+        yaml = result.to_yaml
+        expect(yaml).to be_a(String)
+        expect { YAML.safe_load(yaml) }.not_to raise_error
+      end
+    end
+
+    describe '#to_html' do
+      it 'returns HTML string' do
+        html = result.to_html
+        expect(html).to be_a(String)
+        expect(html).to include('<html')
+        expect(html).to include('test_users')
+      end
+
+      it 'supports different styles' do
+        html = result.to_html(style: :default)
+        expect(html).to be_a(String)
+      end
+    end
+
+    describe '#export_to_file' do
+      let(:temp_file) { Tempfile.new(['test', '.json']) }
+
+      after do
+        temp_file.close
+        temp_file.unlink
+      end
+
+      it 'exports to JSON file' do
+        result.export_to_file(temp_file.path, format: 'json')
+        expect(File.exist?(temp_file.path)).to be true
+        content = File.read(temp_file.path)
+        expect { JSON.parse(content) }.not_to raise_error
+      end
+
+      it 'exports to YAML file' do
+        yaml_file = Tempfile.new(['test', '.yaml'])
+        result.export_to_file(yaml_file.path, format: 'yaml')
+        expect(File.exist?(yaml_file.path)).to be true
+        yaml_file.close
+        yaml_file.unlink
+      end
+
+      it 'exports to HTML file' do
+        html_file = Tempfile.new(['test', '.html'])
+        result.export_to_file(html_file.path, format: 'html')
+        expect(File.exist?(html_file.path)).to be true
+        html_file.close
+        html_file.unlink
+      end
+    end
+  end
 end
 

@@ -59,6 +59,14 @@ export schema(User) user_schema.json
 ```
 [Learn more →](docs/EXPORT.md)
 
+### Model Introspection
+```ruby
+introspect User
+introspect User, :callbacks
+introspect User, :enums
+```
+[Learn more →](docs/MODEL_INTROSPECTION.md)
+
 ### Snippet Library
 ```ruby
 snippets(:add, "User.where(active: true).count", description: "Active users", tags: %w[users metrics])
@@ -108,6 +116,7 @@ rails generate rails_console_pro:install
 - [SQL Explain](docs/SQL_EXPLAIN.md)
 - [Model Statistics](docs/MODEL_STATISTICS.md)
 - [Association Navigation](docs/ASSOCIATION_NAVIGATION.md)
+- [Model Introspection](docs/MODEL_INTROSPECTION.md)
 - [Object Diffing](docs/OBJECT_DIFFING.md)
 - [Export](docs/EXPORT.md)
 - [Snippets](docs/SNIPPETS.md)

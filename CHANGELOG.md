@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Model introspection suite with callbacks, enums, concerns, scopes, validations, and method source lookup
+- Introspect command with filtered views and programmatic access
+- Comprehensive introspection documentation
 - Adaptive profiling command with SQL, cache, and duplicate query analysis
 - Profile result printer, serializer, and documentation
 

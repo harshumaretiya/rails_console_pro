@@ -52,3 +52,7 @@ def snippets(action = :list, *args, **kwargs, &block)
   RailsConsolePro::Commands.snippets(action, *args, **kwargs, &block)
 end
 
+def introspect(model_class, *options)
+  RailsConsolePro::Commands.introspect(model_class, *options)
+end
+

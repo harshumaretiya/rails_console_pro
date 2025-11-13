@@ -83,6 +83,8 @@ module RailsConsolePro
         serialize_explain_result(data)
       when ProfileResult
         serialize_profile_result(data)
+      when IntrospectResult
+        serialize_introspect_result(data)
       when ActiveRecord::Base
         serialize_active_record(data)
       when ActiveRecord::Relation
@@ -135,6 +137,10 @@ module RailsConsolePro
 
     def serialize_profile_result(result)
       Serializers::ProfileSerializer.serialize(result, self)
+    end
+
+    def serialize_introspect_result(result)
+      Serializers::IntrospectSerializer.serialize(result, self)
     end
 
     def serialize_active_record(record)
@@ -396,6 +402,8 @@ module RailsConsolePro
         "SQL Explain Analysis"
       when ProfileResult
         "Profile: #{data.label || 'Session'}"
+      when IntrospectResult
+        "Introspection: #{data.model.name}"
       when ActiveRecord::Base
         "#{data.class.name} ##{data.id}"
       when ActiveRecord::Relation
